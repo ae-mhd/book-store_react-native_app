@@ -60,5 +60,25 @@ export const useAuthStore = create((set) => ({
             console.log(error)
             return { success: false, message: error.message }
         }
+    },
+    checkAuth: async () => {
+        set({ isLoading: true });
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const user = await AsyncStorage.getItem("user");
+            if (token && user) {
+                set({ user: JSON.parse(user), token, isLoading: false });
+            } else {
+                set({ user: null, token: null, isLoading: false });
+            }
+        } catch (error) {
+            set({ isLoading: false });
+            console.log('Auth check failed', error)
+        }
+    },
+    logout: async () => {
+        await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("user");
+        set({ user: null, token: null });
     }
 }))

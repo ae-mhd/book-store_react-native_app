@@ -31,6 +31,7 @@ mobile/android/build/
 mobile/android/app/build/
 mobile/.gradle/
 mobile/*.hprof
+mobile/.env
 
 # Backend
 backend/node_modules/
