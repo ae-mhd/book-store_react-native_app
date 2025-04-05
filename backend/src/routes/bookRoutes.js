@@ -11,7 +11,9 @@ router.post("/", protectRoute, async (req, res) => {
         if (!title || !caption || !rating || !image) {
             return res.status(400).json({ message: "All fields are required" });
         }
+        // console.log({ title, caption, rating, image, })
         const uploadedImage = await cloudinary.uploader.upload(image);
+
         const imgUrl = uploadedImage.secure_url;
 
         const book = await Book.create({
@@ -22,11 +24,11 @@ router.post("/", protectRoute, async (req, res) => {
             user: req.user._id,
         });
         await book.save();
-
         return res.status(201).json({ book });
 
     } catch (error) {
-
+        console.log("Error creating book", error);
+        res.status(500).json({ message: "Server error", error });
     }
 
 })
