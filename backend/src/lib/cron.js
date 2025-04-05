@@ -1,8 +1,8 @@
 import cron from "cron";
-import http from "http";
+import https from "https";
 
 const job = new cron.CronJob("*/14 * * * *", function () {
-    http.get(process.env.BASE_URL, res => {
+    https.get(process.env.BASE_URL, res => {
         if (res.statusCode !== 200) console.log("request sent seccessfully");
         else console.log("request failed", res.statusCode);
     })

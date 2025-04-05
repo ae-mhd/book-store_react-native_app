@@ -69,12 +69,6 @@ export default function Create() {
             const imageType = fileType ? `image/${fileType.toLowerCase()}` : 'image/jpeg';
             const imageDataUrl = `data:${imageType};base64,${imageBase64}`;
 
-            console.log(JSON.stringify({
-                title,
-                caption,
-                rating: rating.toString(),
-                image: imageDataUrl
-            }))
 
             const response = await fetch(basUrl + `/books`, {
                 method: "POST",
