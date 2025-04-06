@@ -19,7 +19,6 @@ export default function Create() {
 
     const router = useRouter()
     const { token } = useAuthStore();
-    console.log(token)
     const pickImage = async () => {
         // Request permissions to access the gallery
         try {
