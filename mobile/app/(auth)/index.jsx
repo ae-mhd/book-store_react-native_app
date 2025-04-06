@@ -16,6 +16,7 @@ export default function Login() {
         if (!result.success) Alert.alert('Error', result.message);
 
     }
+    if (isLoading) return <Loader size={50} />
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}

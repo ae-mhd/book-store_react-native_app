@@ -1,11 +1,13 @@
-import { View, Text, TouchableOpacity, FlatList, } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import styles from '../../assets/styles/home.styles'
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import styles from '../../assets/styles/home.styles';
 import { useAuthStore } from '../../store/auth';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { formatDate, formatMebmerSince } from '../../lib/utils';
 import COLORS from '../../constants/colors';
+import Loader from '../../components/Loader';
+
 export default function Home() {
     const { token } = useAuthStore();
     const [books, setBooks] = useState([]);
@@ -13,39 +15,42 @@ export default function Home() {
     const [refreshing, setRefreshing] = useState(false);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
-    // const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
-    const baseUrl = "http://localhost:7000/api/v1"
-    // console.log(baseUrl)
+    const baseUrl = process.env.EXPO_PUBLIC_BASE_URL;
+
     const fetchBooks = async (pageNum = 1, refresh = false) => {
         try {
-
             if (refresh) setRefreshing(true);
             else if (pageNum === 1) setLoading(true);
 
             const response = await fetch(baseUrl + `/books?page=${pageNum}&limit=2`, {
-                method: "GET",
+                method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json',
                 },
             });
             const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.message || "Something went wrong");
+                throw new Error(data.message || 'Something went wrong');
             }
-            // setBooks(prev => [...prev, ...data.books]);
-            const uniqueBooks = refresh || pageNum === 1 ? data.books : Array.from(new Set([...books, ...data.books].map(book => book._id)))
-                .map(id => [...books, ...data.books].find(book => book._id === id));
+
+            const uniqueBooks =
+                refresh || pageNum === 1
+                    ? data.books
+                    : Array.from(new Set([...books, ...data.books].map((book) => book._id))).map(
+                        (id) => [...books, ...data.books].find((book) => book._id === id)
+                    );
             setBooks(uniqueBooks);
             setHasMore(pageNum < data.totalPages);
             setPage(pageNum);
         } catch (error) {
             console.log(error);
         } finally {
-            if (refresh) setRefreshing(false)
+            if (refresh) setRefreshing(false);
             else setLoading(false);
         }
-    }
+    };
+
     const renderItem = ({ item }) => (
         <View style={styles.bookCard}>
             <View style={styles.bookHeader}>
@@ -66,33 +71,56 @@ export default function Home() {
                 <Text style={styles.date}>Shared on {formatDate(item?.createdAt)}</Text>
             </View>
         </View>
-    )
+    );
 
     const renderRatingStars = (rating = 1) => {
-        const stars = []
+        const stars = [];
         for (let i = 1; i <= 5; i++) {
             stars.push(
-
                 <Ionicons
-                    name={i <= rating ? "star" : "star-outline"}
+                    key={i}
+                    name={i <= rating ? 'star' : 'star-outline'}
                     size={32}
-                    color={i <= rating ? "#f4bf00" : COLORS.textSecondary}
+                    color={i <= rating ? '#f4bf00' : COLORS.textSecondary}
                 />
-
-            )
+            );
         }
-        return stars
-    }
+        return stars;
+    };
+
+    const handleLoadMore = async () => {
+        if (hasMore && !loading && !refreshing) {
+            await fetchBooks(page + 1);
+        }
+    };
+
+    const renderFooter = () => {
+        if (hasMore && books.length > 0) {
+            return (
+                <ActivityIndicator style={styles.footerLoader} size="large" color={COLORS.primary} />
+            );
+        }
+        return null;
+    };
 
     useEffect(() => {
         fetchBooks();
-    }, [])
+    }, []);
+    if (loading) return <Loader size={50} />
     return (
         <View style={styles.container}>
             <FlatList
                 keyExtractor={(item) => item._id}
                 data={books}
                 renderItem={renderItem}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={() => fetchBooks(1, true)}
+                        colors={[COLORS.primary]}
+                        tintColor={COLORS.primary}
+                    />
+                }
                 contentContainerStyle={styles.listContainer}
                 showsVerticalScrollIndicator={false}
                 ListHeaderComponent={
@@ -106,9 +134,12 @@ export default function Home() {
                         <Ionicons name="book-outline" size={64} color={COLORS.textSecondary} />
                         <Text style={styles.emptyText}>No recommendations yet </Text>
                         <Text style={styles.emptySubtext}>Be the first to share a book! </Text>
-                    </View>}
+                    </View>
+                }
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.5}
+                ListFooterComponent={renderFooter}
             />
-
         </View>
-    )
+    );
 }
