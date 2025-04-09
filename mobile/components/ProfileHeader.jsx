@@ -5,7 +5,6 @@ import { Image } from 'expo-image';
 import { formatMebmerSince } from '../lib/utils';
 const ProfileHeader = () => {
     const { user } = useAuthStore();
-    console.log(user)
     return (
         <View style={styles.profileHeader}>
             <Image source={user?.image} style={styles.profileImage} />

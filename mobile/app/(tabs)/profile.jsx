@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, FlatList, TouchableOpacity, Alert, RefreshControl } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
 import { useAuthStore } from '../../store/auth';
@@ -10,6 +10,7 @@ import LogouttButton from '../../components/LogouttButton';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { formatDate } from '../../lib/utils';
+import Loader from '../../components/Loader';
 
 export default function Profile() {
     const { token } = useAuthStore();
@@ -118,9 +119,17 @@ export default function Profile() {
             )}
         </TouchableOpacity>
     </View>
+
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        await fetchBooks();
+        setRefreshing(false);
+    }
     useEffect(() => {
         fetchBooks();
     }, []);
+
+    if (isLoading && !refreshing) return <Loader size={50} />
     return (
         <View style={styles.container}>
             <ProfileHeader />
@@ -135,6 +144,18 @@ export default function Profile() {
             <FlatList
                 data={books}
                 renderItem={renderBookIem}
+                keyExtractor={(item) => item._id}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.booksList}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={handleRefresh}
+                        colors={[COLORS.primary]}
+                        tintColor={COLORS.primary}
+                    />
+                }
+
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
                         <Ionicons name="book-outline" size={50} color={COLORS.textSecondary} />
@@ -144,10 +165,6 @@ export default function Profile() {
                         </TouchableOpacity>
                     </View>
                 }
-                keyExtractor={(item) => item._id}
-                contentContainerStyle={styles.booksContainer}
-                refreshing={refreshing}
-                onRefresh={() => fetchBooks()}
             />
 
 
