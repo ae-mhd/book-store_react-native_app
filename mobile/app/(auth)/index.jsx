@@ -5,6 +5,7 @@ import styles from "../../assets/styles/login.styles";
 import COLORS from '../../constants/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/auth';
+import Loader from '../../components/Loader';
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

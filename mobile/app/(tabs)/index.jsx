@@ -1,10 +1,10 @@
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import styles from '../../assets/styles/home.styles';
 import { useAuthStore } from '../../store/auth';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
-import { formatDate, formatMebmerSince } from '../../lib/utils';
+import { formatDate, } from '../../lib/utils';
 import COLORS from '../../constants/colors';
 import Loader from '../../components/Loader';
 
