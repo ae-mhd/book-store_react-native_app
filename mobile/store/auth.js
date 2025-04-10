@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const basUrl = process.env.EXPO_PUBLIC_BASE_URL
+const basUrl = "https://book-store-react-native-app.onrender.com/api/v1"
 export const useAuthStore = create((set) => ({
     user: null,
     token: null,

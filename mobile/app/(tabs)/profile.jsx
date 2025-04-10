@@ -20,7 +20,7 @@ export default function Profile() {
     const [refreshing, setRefreshing] = useState(false);
     const [deletedBookLoading, setDeletedBookLoading] = useState(false);
     const router = useRouter();
-    const baseUrl = process.env.EXPO_PUBLIC_BASE_URL;
+    const baseUrl = "https://book-store-react-native-app.onrender.com/api/v1";
 
     const fetchBooks = async () => {
         try {

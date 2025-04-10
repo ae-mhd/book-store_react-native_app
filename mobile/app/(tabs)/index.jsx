@@ -15,7 +15,7 @@ export default function Home() {
     const [refreshing, setRefreshing] = useState(false);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
-    const baseUrl = process.env.EXPO_PUBLIC_BASE_URL;
+    const baseUrl = "https://book-store-react-native-app.onrender.com/api/v1";
 
     const fetchBooks = async (pageNum = 1, refresh = false) => {
         try {

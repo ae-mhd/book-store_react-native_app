@@ -15,7 +15,7 @@ export default function Create() {
     const [image, setImage] = useState(null) // to display it when select the image
     const [imageBase64, setImageBase64] = useState(null)
     const [loading, setLoading] = useState(false)
-    const basUrl = process.env.EXPO_PUBLIC_BASE_URL
+    const basUrl = "https://book-store-react-native-app.onrender.com/api/v1"
 
     const router = useRouter()
     const { token } = useAuthStore();
